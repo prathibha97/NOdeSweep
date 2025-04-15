@@ -1,0 +1,433 @@
+{
+  "info": {
+    "name": "NOdeSweep API",
+    "description": "A comprehensive API collection for testing the NOdeSweep application, which helps manage and clean node_modules folders across projects.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "Scanner",
+      "description": "Endpoints for scanning file system for node_modules directories",
+      "item": [
+        {
+          "name": "Create Scan Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/scanner/jobs",
+              "host": ["{{baseUrl}}"],
+              "path": ["scanner", "jobs"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"basePaths\": [\"/path/to/scan\"],\n    \"includeNodeModules\": true,\n    \"includeGitFolders\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Creates a new scan job and starts scanning the specified directories for node_modules folders.\n\n**Request Body:**\n- `basePaths` (array): Directories to scan\n- `includeNodeModules` (boolean, optional): Whether to scan inside node_modules directories (default: false)\n- `includeGitFolders` (boolean, optional): Whether to scan inside .git directories (default: false)\n\n**Response:**\nReturns the created scan job object with an ID that can be used to track progress."
+          }
+        },
+        {
+          "name": "Get All Scan Jobs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/scanner/jobs?status=completed",
+              "host": ["{{baseUrl}}"],
+              "path": ["scanner", "jobs"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "completed",
+                  "description": "Filter by job status (pending, active, completed, failed)"
+                }
+              ]
+            },
+            "description": "Retrieves a list of all scan jobs, optionally filtered by status.\n\n**Query Parameters:**\n- `status` (string, optional): Filter jobs by status (pending, active, completed, failed)\n\n**Response:**\nReturns an array of scan job objects."
+          }
+        },
+        {
+          "name": "Get Scan Job By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/scanner/jobs/{{scanJobId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["scanner", "jobs", "{{scanJobId}}"]
+            },
+            "description": "Retrieves details for a specific scan job by its ID.\n\n**Path Parameters:**\n- `scanJobId`: ID of the scan job to retrieve\n\n**Response:**\nReturns the scan job object with details about the scanning progress and results."
+          }
+        },
+        {
+          "name": "Get Scan Results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/scanner/results?jobId={{scanJobId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["scanner", "results"],
+              "query": [
+                {
+                  "key": "jobId",
+                  "value": "{{scanJobId}}",
+                  "description": "Filter results by scan job ID"
+                }
+              ]
+            },
+            "description": "Retrieves scan results, optionally filtered by a specific job ID.\n\n**Query Parameters:**\n- `jobId` (string, optional): Filter results by scan job ID\n\n**Response:**\nReturns an array of scan result objects containing information about each node_modules directory found."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Projects",
+      "description": "Endpoints for managing projects",
+      "item": [
+        {
+          "name": "Create Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/projects",
+              "host": ["{{baseUrl}}"],
+              "path": ["projects"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"My Project\",\n    \"path\": \"/path/to/project\",\n    \"description\": \"A sample project\",\n    \"tags\": [\"nodejs\", \"typescript\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Creates a new project in the system.\n\n**Request Body:**\n- `name` (string): Project name\n- `path` (string): File system path to the project\n- `description` (string, optional): Project description\n- `tags` (array, optional): Project tags\n\n**Response:**\nReturns the created project object."
+          }
+        },
+        {
+          "name": "Get All Projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/projects?includeInactive=false",
+              "host": ["{{baseUrl}}"],
+              "path": ["projects"],
+              "query": [
+                {
+                  "key": "includeInactive",
+                  "value": "false",
+                  "description": "Whether to include inactive projects"
+                }
+              ]
+            },
+            "description": "Retrieves a list of all projects, optionally including inactive ones.\n\n**Query Parameters:**\n- `includeInactive` (boolean, optional): Whether to include inactive projects (default: false)\n\n**Response:**\nReturns an array of project objects."
+          }
+        },
+        {
+          "name": "Get Project By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/projects/{{projectId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["projects", "{{projectId}}"]
+            },
+            "description": "Retrieves details for a specific project by its ID.\n\n**Path Parameters:**\n- `projectId`: ID of the project to retrieve\n\n**Response:**\nReturns the project object with details including node_modules size, dependency count, etc."
+          }
+        },
+        {
+          "name": "Update Project",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/projects/{{projectId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["projects", "{{projectId}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Updated Project Name\",\n    \"description\": \"Updated description\",\n    \"tags\": [\"nodejs\", \"typescript\", \"updated\"],\n    \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Updates a specific project by its ID.\n\n**Path Parameters:**\n- `projectId`: ID of the project to update\n\n**Request Body:**\n- `name` (string, optional): Project name\n- `description` (string, optional): Project description\n- `tags` (array, optional): Project tags\n- `active` (boolean, optional): Whether the project is active\n\n**Response:**\nReturns the updated project object."
+          }
+        },
+        {
+          "name": "Delete Project",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/projects/{{projectId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["projects", "{{projectId}}"]
+            },
+            "description": "Deletes a specific project by its ID.\n\n**Path Parameters:**\n- `projectId`: ID of the project to delete\n\n**Response:**\nNo content is returned upon successful deletion."
+          }
+        },
+        {
+          "name": "Scan Project",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/projects/{{projectId}}/scan",
+              "host": ["{{baseUrl}}"],
+              "path": ["projects", "{{projectId}}", "scan"]
+            },
+            "description": "Initiates a scan of a specific project's directory to find and analyze node_modules.\n\n**Path Parameters:**\n- `projectId`: ID of the project to scan\n\n**Response:**\nReturns details about the scan job and any results found."
+          }
+        },
+        {
+          "name": "Detect Projects",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/projects/detect",
+              "host": ["{{baseUrl}}"],
+              "path": ["projects", "detect"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"basePath\": \"/path/to/projects/directory\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Auto-detects NodeJS projects in a specified directory by looking for package.json files.\n\n**Request Body:**\n- `basePath` (string): Directory to scan for NodeJS projects\n\n**Response:**\nReturns an array of detected projects."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cleanup",
+      "description": "Endpoints for cleaning up node_modules directories",
+      "item": [
+        {
+          "name": "Create Cleanup Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cleanup/jobs",
+              "host": ["{{baseUrl}}"],
+              "path": ["cleanup", "jobs"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"strategy\": \"all\",\n    \"targetPaths\": [\"/path/to/project/node_modules\"],\n    \"olderThanDays\": 30,\n    \"dryRun\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Creates a new cleanup job to remove node_modules directories.\n\n**Request Body:**\n- `strategy` (string): Cleanup strategy ('all', 'unused', 'older-than', 'specific')\n- `targetPaths` (array): Directories to target for cleanup\n- `olderThanDays` (number, optional): For 'older-than' strategy, number of days threshold\n- `dryRun` (boolean, optional): If true, simulates cleanup without actually deleting files (default: false)\n\n**Response:**\nReturns the created cleanup job object with an ID that can be used to track progress."
+          }
+        },
+        {
+          "name": "Get All Cleanup Jobs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cleanup/jobs",
+              "host": ["{{baseUrl}}"],
+              "path": ["cleanup", "jobs"]
+            },
+            "description": "Retrieves a list of all cleanup jobs.\n\n**Response:**\nReturns an array of cleanup job objects."
+          }
+        },
+        {
+          "name": "Get Cleanup Job By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cleanup/jobs/{{cleanupJobId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["cleanup", "jobs", "{{cleanupJobId}}"]
+            },
+            "description": "Retrieves details for a specific cleanup job by its ID.\n\n**Path Parameters:**\n- `cleanupJobId`: ID of the cleanup job to retrieve\n\n**Response:**\nReturns the cleanup job object with details about the cleanup progress and results."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis",
+      "description": "Endpoints for analyzing project dependencies",
+      "item": [
+        {
+          "name": "Analyze Project",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/analysis/projects/{{projectId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["analysis", "projects", "{{projectId}}"]
+            },
+            "description": "Initiates a dependency analysis for a specific project.\n\n**Path Parameters:**\n- `projectId`: ID of the project to analyze\n\n**Response:**\nReturns the analysis results with insights about duplicated dependencies, unused dependencies, etc."
+          }
+        },
+        {
+          "name": "Get Project Analysis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/analysis/projects/{{projectId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["analysis", "projects", "{{projectId}}"]
+            },
+            "description": "Retrieves the latest dependency analysis for a specific project.\n\n**Path Parameters:**\n- `projectId`: ID of the project\n\n**Response:**\nReturns the analysis object with details about duplicated dependencies, unused dependencies, etc."
+          }
+        },
+        {
+          "name": "Get All Analyses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/analysis",
+              "host": ["{{baseUrl}}"],
+              "path": ["analysis"]
+            },
+            "description": "Retrieves all dependency analyses across all projects.\n\n**Response:**\nReturns an array of analysis objects."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "description": "Endpoints for the frontend dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard"]
+            },
+            "description": "Retrieves summary statistics for the dashboard, including total projects, total node_modules size, disk usage, etc.\n\n**Response:**\nReturns an object with various statistics useful for a dashboard view."
+          }
+        },
+        {
+          "name": "Get Top Heaviest Projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/top-heaviest-projects",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "top-heaviest-projects"]
+            },
+            "description": "Retrieves a list of projects with the largest node_modules directories.\n\n**Response:**\nReturns an array of project objects sorted by node_modules size (largest first)."
+          }
+        },
+        {
+          "name": "Get Common Duplicated Dependencies",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/common-duplicated-dependencies",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "common-duplicated-dependencies"]
+            },
+            "description": "Retrieves a list of the most commonly duplicated dependencies across all projects.\n\n**Response:**\nReturns an array of duplicated dependency objects sorted by frequency (most common first)."
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string",
+      "description": "Base URL for the NOdeSweep API"
+    },
+    {
+      "key": "projectId",
+      "value": "your-project-id-here",
+      "type": "string",
+      "description": "ID of a project"
+    },
+    {
+      "key": "scanJobId",
+      "value": "your-scan-job-id-here",
+      "type": "string",
+      "description": "ID of a scan job"
+    },
+    {
+      "key": "cleanupJobId",
+      "value": "your-cleanup-job-id-here",
+      "type": "string",
+      "description": "ID of a cleanup job"
+    }
+  ]
+}
